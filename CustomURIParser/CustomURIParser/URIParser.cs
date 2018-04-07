@@ -9,7 +9,7 @@ namespace CustomURIParser
     /// <summary> 
     ///  This class contains all the utility methods used for URI parsing. It is important to note that a URI has
     ///  4 main parts: 'scheme', 'authority', 'path', 'query', 'fragment'. These are separated by '//', '/', '?' and '#'
-    ///  respectively.
+    ///  respectively. <see cref="https://tools.ietf.org/html/rfc3986"/>
     /// </summary> 
     public class URIParser : GenericUriParser
     {
@@ -61,7 +61,21 @@ namespace CustomURIParser
             {
                 try
                 {
-                    parseComponentsAbsolute(tempUri, uriDict);
+                    // If authority component is absent this may still be a valid uri
+                    if (!tempUri.Contains("//"))
+                    {
+                        if (tempUri.Contains(":"))
+                        {
+                            string[] splitUri = tempUri.Split(new char[] { ':' }, 2);
+                            tempUri = splitUri[0] + "://a/" + splitUri[1];
+                            parseComponentsAbsolute(tempUri, uriDict);
+                            uriDict["authority"] = "";
+                        }
+                    }
+                    else
+                    {
+                        parseComponentsAbsolute(tempUri, uriDict);
+                    }
                 }
                 catch(Exception e)
                 {
