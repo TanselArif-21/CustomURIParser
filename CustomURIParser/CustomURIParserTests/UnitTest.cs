@@ -1008,6 +1008,787 @@ namespace CustomURIParserTests
         }
 
         /// <summary>
+        /// Simple relative URI unit tests. These tests are meant to check whether CustomURIParse
+        /// correctly parses simple RELATIVE URIs. Using a multi level absolute URI.
+        /// </summary>
+        [TestMethod]
+        public void parseTestRelativeMain3()
+        {
+            string schemeTest = "http";
+            string authorityTest = "authority";
+            string pathTest = "path2";
+            string queryTest = "query";
+            string fragmentTest = "fragment";
+            
+            URIParser MyParser = new URIParser(false, schemeTest + "://" + authorityTest + "/a/b/c/d;p?q");
+
+            string uri = null;
+            Dictionary<string, string> actualComponents = null;
+            Dictionary<string, string> expectedComponents = null;
+
+            // Test 1: relative URI <see cref="https://tools.ietf.org/html/rfc3986#section-3.3"/> 
+            uri = pathTest + "?" + queryTest + "#" + fragmentTest;
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", schemeTest);
+            expectedComponents.Add("authority", authorityTest);
+            expectedComponents.Add("path", "/a/b/c/" + pathTest);
+            expectedComponents.Add("query", "?" + queryTest);
+            expectedComponents.Add("fragment", "#" + fragmentTest);
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 2: relative URI, query + fragment <see cref="https://tools.ietf.org/html/rfc3986#section-3.3"/> 
+            uri = "?" + queryTest + "#" + fragmentTest;
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", schemeTest);
+            expectedComponents.Add("authority", authorityTest);
+            expectedComponents.Add("path", "/a/b/c/d;p");
+            expectedComponents.Add("query", "?" + queryTest);
+            expectedComponents.Add("fragment", "#" + fragmentTest);
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 3: relative URI, fragment <see cref="https://tools.ietf.org/html/rfc3986#section-3.3"/> 
+            uri = "#" + fragmentTest;
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", schemeTest);
+            expectedComponents.Add("authority", authorityTest);
+            expectedComponents.Add("path", "/a/b/c/d;p");
+            expectedComponents.Add("query", "?q");
+            expectedComponents.Add("fragment", "#" + fragmentTest);
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 4: relative URI, upper hierarchy path <see cref="https://tools.ietf.org/html/rfc3986#section-3.3"/> 
+            uri = "./" + pathTest;
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", schemeTest);
+            expectedComponents.Add("authority", authorityTest);
+            expectedComponents.Add("path", "/a/b/c/" + pathTest);
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 5: relative URI, query <see cref="https://tools.ietf.org/html/rfc3986#section-3.3"/> 
+            uri = "?" + queryTest;
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", schemeTest);
+            expectedComponents.Add("authority", authorityTest);
+            expectedComponents.Add("path", "/a/b/c/d;p");
+            expectedComponents.Add("query", "?" + queryTest);
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 6: relative URI, path and query when there is authority <see cref="https://tools.ietf.org/html/rfc3986#section-3.3"/> 
+            uri = "/" + pathTest + "?" + queryTest;
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", schemeTest);
+            expectedComponents.Add("authority", authorityTest);
+            expectedComponents.Add("path", "/" + pathTest);
+            expectedComponents.Add("query", "?" + queryTest);
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 7: relative URI, fragment only when there is an authority <see cref="https://tools.ietf.org/html/rfc3986#section-3.3"/> 
+            uri = "#" + fragmentTest;
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", schemeTest);
+            expectedComponents.Add("authority", authorityTest);
+            expectedComponents.Add("path", "/a/b/c/d;p");
+            expectedComponents.Add("query", "?q");
+            expectedComponents.Add("fragment", "#" + fragmentTest);
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 8: relative URI, path and fragment with authority <see cref="https://tools.ietf.org/html/rfc3986#section-3.3"/> 
+            uri = pathTest + "#" + fragmentTest;
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", schemeTest);
+            expectedComponents.Add("authority", authorityTest);
+            expectedComponents.Add("path", "/a/b/c/" + pathTest);
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "#" + fragmentTest);
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 9: relative URI, path, query and fragment with authority <see cref="https://tools.ietf.org/html/rfc3986#section-3.3"/> 
+            uri = pathTest + "?" + queryTest + "#" + fragmentTest;
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", schemeTest);
+            expectedComponents.Add("authority", authorityTest);
+            expectedComponents.Add("path", "/a/b/c/" + pathTest);
+            expectedComponents.Add("query", "?" + queryTest);
+            expectedComponents.Add("fragment", "#" + fragmentTest);
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 10: relative URI, path (semi-colon delimited) without authority <see cref="https://tools.ietf.org/html/rfc3986#section-3.3"/> 
+            uri = ";" + pathTest;
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", schemeTest);
+            expectedComponents.Add("authority", authorityTest);
+            expectedComponents.Add("path", "/a/b/c/;" + pathTest);
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 11: relative URI, multiple paths (semi-colon delimited) with authority <see cref="https://tools.ietf.org/html/rfc3986#section-3.3"/> 
+            uri = pathTest + ";" + pathTest;
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", schemeTest);
+            expectedComponents.Add("authority", authorityTest);
+            expectedComponents.Add("path", "/a/b/c/" + pathTest + ";" + pathTest);
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 12: relative URI, multiple paths (semi-colon delimited), query and fragment without authority <see cref="https://tools.ietf.org/html/rfc3986#section-3.3"/> 
+            uri = pathTest + ";" + pathTest + "?" + queryTest + "#" + fragmentTest;
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", schemeTest);
+            expectedComponents.Add("authority", authorityTest);
+            expectedComponents.Add("path", "/a/b/c/" + pathTest + ";" + pathTest);
+            expectedComponents.Add("query", "?" + queryTest);
+            expectedComponents.Add("fragment", "#" + fragmentTest);
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 13: relative URI, empty path without authority <see cref="https://tools.ietf.org/html/rfc3986#section-3.3"/> 
+            uri = "";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", schemeTest);
+            expectedComponents.Add("authority", authorityTest);
+            expectedComponents.Add("path", "/a/b/c/d;p");
+            expectedComponents.Add("query", "?q");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 14: relative URI, current path with authority <see cref="https://tools.ietf.org/html/rfc3986#section-3.3"/> 
+            uri = ".";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", schemeTest);
+            expectedComponents.Add("authority", authorityTest);
+            expectedComponents.Add("path", "/a/b/c/");
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 15: relative URI, previous path with authority <see cref="https://tools.ietf.org/html/rfc3986#section-3.3"/> 
+            uri = "./";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", schemeTest);
+            expectedComponents.Add("authority", authorityTest);
+            expectedComponents.Add("path", "/a/b/c/");
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 16: relative URI, previous path with authority <see cref="https://tools.ietf.org/html/rfc3986#section-3.3"/> 
+            uri = "..";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", schemeTest);
+            expectedComponents.Add("authority", authorityTest);
+            expectedComponents.Add("path", "/a/b/");
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 17: relative URI, previous path with authority <see cref="https://tools.ietf.org/html/rfc3986#section-3.3"/> 
+            uri = "../";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", schemeTest);
+            expectedComponents.Add("authority", authorityTest);
+            expectedComponents.Add("path", "/a/b/");
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 18: relative URI, previous path with authority <see cref="https://tools.ietf.org/html/rfc3986#section-3.3"/> 
+            uri = "../..";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", schemeTest);
+            expectedComponents.Add("authority", authorityTest);
+            expectedComponents.Add("path", "/a/");
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 19: relative URI, previous level and path with authority <see cref="https://tools.ietf.org/html/rfc3986#section-3.3"/> 
+            uri = "../" + pathTest;
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", schemeTest);
+            expectedComponents.Add("authority", authorityTest);
+            expectedComponents.Add("path", "/a/b/" + pathTest);
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 20: relative URI, up two paths with authority <see cref="https://tools.ietf.org/html/rfc3986#section-3.3"/> 
+            uri = "../../";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", schemeTest);
+            expectedComponents.Add("authority", authorityTest);
+            expectedComponents.Add("path", "/a/");
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 21: relative URI, up two paths and then path with authority <see cref="https://tools.ietf.org/html/rfc3986#section-3.3"/> 
+            uri = "../../" + pathTest;
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", schemeTest);
+            expectedComponents.Add("authority", authorityTest);
+            expectedComponents.Add("path", "/a/" + pathTest);
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+        }
+
+        /// <summary>
+        /// Simple relative URI unit tests. These tests are meant to check whether CustomURIParse
+        /// correctly parses simple RELATIVE URIs. Using a multi level absolute URI. 
+        /// <see cref="https://www.w3.org/2004/04/uri-rel-test.html"/> 
+        /// </summary>
+        [TestMethod]
+        public void parseTestRelativeMain4()
+        {
+            URIParser MyParser = new URIParser(false, "http://a/b/c/d;p?q");
+
+            string uri = null;
+            Dictionary<string, string> actualComponents = null;
+            Dictionary<string, string> expectedComponents = null;
+
+            // Test 1
+            uri = "g";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", "http");
+            expectedComponents.Add("authority", "a");
+            expectedComponents.Add("path", "/b/c/g");
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 2
+            uri = "./g";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", "http");
+            expectedComponents.Add("authority", "a");
+            expectedComponents.Add("path", "/b/c/g");
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 3
+            uri = "g/";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", "http");
+            expectedComponents.Add("authority", "a");
+            expectedComponents.Add("path", "/b/c/g/");
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 4
+            uri = "//g";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", "http");
+            expectedComponents.Add("authority", "g");
+            expectedComponents.Add("path", "/");
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 5
+            uri = "?y";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", "http");
+            expectedComponents.Add("authority", "a");
+            expectedComponents.Add("path", "/b/c/d;p");
+            expectedComponents.Add("query", "?y");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 6
+            uri = "g?y";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", "http");
+            expectedComponents.Add("authority", "a");
+            expectedComponents.Add("path", "/b/c/g");
+            expectedComponents.Add("query", "?y");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 7
+            uri = "#s";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", "http");
+            expectedComponents.Add("authority", "a");
+            expectedComponents.Add("path", "/b/c/d;p");
+            expectedComponents.Add("query", "?q");
+            expectedComponents.Add("fragment", "#s");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 8
+            uri = "g#s";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", "http");
+            expectedComponents.Add("authority", "a");
+            expectedComponents.Add("path", "/b/c/g");
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "#s");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 9
+            uri = "g?y#s";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", "http");
+            expectedComponents.Add("authority", "a");
+            expectedComponents.Add("path", "/b/c/g");
+            expectedComponents.Add("query", "?y");
+            expectedComponents.Add("fragment", "#s");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 10
+            uri = ";x";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", "http");
+            expectedComponents.Add("authority", "a");
+            expectedComponents.Add("path", "/b/c/;x");
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 11
+            uri = "g;x";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", "http");
+            expectedComponents.Add("authority", "a");
+            expectedComponents.Add("path", "/b/c/g;x");
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 12
+            uri = "g;x?y#s";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", "http");
+            expectedComponents.Add("authority", "a");
+            expectedComponents.Add("path", "/b/c/g;x");
+            expectedComponents.Add("query", "?y");
+            expectedComponents.Add("fragment", "#s");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 13
+            uri = "";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", "http");
+            expectedComponents.Add("authority", "a");
+            expectedComponents.Add("path", "/b/c/d;p");
+            expectedComponents.Add("query", "?q");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 14
+            uri = ".";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", "http");
+            expectedComponents.Add("authority", "a");
+            expectedComponents.Add("path", "/b/c/");
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 15
+            uri = "./";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", "http");
+            expectedComponents.Add("authority", "a");
+            expectedComponents.Add("path", "/b/c/");
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 16
+            uri = "..";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", "http");
+            expectedComponents.Add("authority", "a");
+            expectedComponents.Add("path", "/b/");
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 17
+            uri = "../";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", "http");
+            expectedComponents.Add("authority", "a");
+            expectedComponents.Add("path", "/b/");
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 18
+            uri = "../g";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", "http");
+            expectedComponents.Add("authority", "a");
+            expectedComponents.Add("path", "/b/g");
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 19
+            uri = "../..";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", "http");
+            expectedComponents.Add("authority", "a");
+            expectedComponents.Add("path", "/");
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 20
+            uri = "../../";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", "http");
+            expectedComponents.Add("authority", "a");
+            expectedComponents.Add("path", "/");
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+
+            // Test 21
+            uri = "../../g";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", "http");
+            expectedComponents.Add("authority", "a");
+            expectedComponents.Add("path", "/g");
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+        }
+
+        /// <summary>
+        /// Simple relative URI unit tests. These tests are meant to check whether CustomURIParse
+        /// correctly parses simple RELATIVE URIs. Using a multi level absolute URI. 
+        /// <see cref="https://www.w3.org/2004/04/uri-rel-test.html"/> 
+        /// </summary>
+        [TestMethod]
+        public void parseTestRelativeMain5()
+        {
+            URIParser MyParser = new URIParser(false, "http://a/b/c/d;p?q");
+
+            string uri = null;
+            Dictionary<string, string> actualComponents = null;
+            Dictionary<string, string> expectedComponents = null;
+
+            // Test 1
+            uri = "gggg:h";
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", "gggg");
+            expectedComponents.Add("authority", "");
+            expectedComponents.Add("path", "h");
+            expectedComponents.Add("query", "");
+            expectedComponents.Add("fragment", "");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+        }
+
+        /// <summary>
         /// This test tests the validation capabilities of CustomURIParser when the application is
         /// absolute
         /// </summary>
@@ -1021,14 +1802,14 @@ namespace CustomURIParserTests
             URIParser MyParser = new URIParser();
             string expectedResult = "Invalid URI: The URI scheme is not valid.";
             Dictionary<string, string> actualComponents = MyParser.parseUri(uri);
-            Assert.AreEqual(expectedResult, MyParser.error.ToString());
+            Assert.AreEqual(expectedResult, MyParser.Error.ToString());
 
             // Test 2
             MyParser = new URIParser();
             uri = "h?ttp://authority/path1/path2?query#fragment";
             expectedResult = "Invalid URI: The URI scheme is not valid.";
             actualComponents = MyParser.parseUri(uri);
-            Assert.AreEqual(expectedResult, MyParser.error.ToString());
+            Assert.AreEqual(expectedResult, MyParser.Error.ToString());
             
             Uri myUri = new Uri(uri, UriKind.Relative);
 
@@ -1037,14 +1818,14 @@ namespace CustomURIParserTests
             uri = "://authority/path1/path2?query#fragment";
             expectedResult = "Invalid URI: The scheme cannot be empty of an absolute URI.";
             actualComponents = MyParser.parseUri(uri);
-            Assert.AreEqual(expectedResult, MyParser.error.ToString());
+            Assert.AreEqual(expectedResult, MyParser.Error.ToString());
 
             // Test 4
             MyParser = new URIParser();
             uri = "http:///path1/path2?query#fragment";
             expectedResult = "Invalid URI: If the authority component is empty, remove the double slash.";
             actualComponents = MyParser.parseUri(uri);
-            Assert.AreEqual(expectedResult, MyParser.error.ToString());
+            Assert.AreEqual(expectedResult, MyParser.Error.ToString());
         }
 
         /// <summary>
@@ -1070,7 +1851,7 @@ namespace CustomURIParserTests
             //uri = "..";
             //expectedResult = "Invalid URI: The path is not valid.";
             //actualComponents = MyParser.parseUri(uri);
-            //Assert.AreEqual(expectedResult, MyParser.error.ToString());
+            //Assert.AreEqual(expectedResult, MyParser.Error.ToString());
         }
     }
 }
