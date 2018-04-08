@@ -17,11 +17,47 @@ namespace CustomURIParserTests
         [TestMethod]
         public void justATest()
         {
-            // Test 1
-            string uri = "http://username:password@example.com:123/b/c";
-            Uri myUri = new Uri(uri);
-            Uri myBaseUri = new Uri("http:/a/b/c", UriKind.Absolute);
-            myUri = new Uri(myBaseUri, uri);
+            URIParser MyParser = new URIParser();
+
+            // Test 1: full absolute URI
+            string uri = "http://authority/path1?query#fragment";
+            Dictionary<string, string> actualComponents = null;
+
+            Dictionary<string, string> expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", "http");
+            expectedComponents.Add("authority", "authority");
+            expectedComponents.Add("path", "/path1");
+            expectedComponents.Add("query", "?query");
+            expectedComponents.Add("fragment", "#fragment");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "authority");
+            expectedComponents.Add("port", "");
+
+            actualComponents = MyParser.parseUri(uri);
+        }
+
+        [TestMethod]
+        public void justATest2()
+        {
+            URIParser MyParser = new URIParser(false, "http://authority");
+
+            // Test 1: full absolute URI
+            string uri = "/path1?query#fragment";
+            Dictionary<string, string> actualComponents = null;
+
+            Dictionary<string, string> expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", "http");
+            expectedComponents.Add("authority", "authority");
+            expectedComponents.Add("path", "/path1");
+            expectedComponents.Add("query", "?query");
+            expectedComponents.Add("fragment", "#fragment");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "authority");
+            expectedComponents.Add("port", "");
+
+            actualComponents = MyParser.parseUri(uri);
         }
 
         /// <summary>
@@ -760,7 +796,6 @@ namespace CustomURIParserTests
         public void parseTestRelativeMain2()
         {
             string schemeTest = "http";
-            string authorityTest = "authority";
             string pathTest = "path2";
             string queryTest = "query";
             string fragmentTest = "fragment";
@@ -2236,22 +2271,84 @@ namespace CustomURIParserTests
         public void parseTestValidateSchemeForRelativeWithAbsolute()
         {
             string schemeTest = "http";
-            string authorityTest = "authority";
-            string pathTest = "path2";
-            string queryTest = "query";
-            string fragmentTest = "fragment";
 
             URIParser MyParser = new URIParser(false, schemeTest + ":");
-
-            string uri = null;
-            string expectedResult = null;
-            Dictionary<string, string> actualComponents = null;
 
             // Test 1
             //uri = "..";
             //expectedResult = "Invalid URI: The path is not valid.";
             //actualComponents = MyParser.parseUri(uri);
             //Assert.AreEqual(expectedResult, MyParser.Error.ToString());
+        }
+
+        /// <summary>
+        /// This test tests the validation capabilities of CustomURIParser when the application is
+        /// relative and the absolute URI is provided
+        /// </summary>
+        [TestMethod]
+        public void parseTestFullAuthorityTest()
+        {
+            string schemeTest = "http";
+            string authorityTest = "username:1234@host.com:123";
+            string pathTest = "path2";
+            string queryTest = "query";
+            string fragmentTest = "fragment";
+
+            URIParser MyParser = new URIParser(false, schemeTest + "://" + authorityTest + "/a/b/c/d;p?q");
+
+            string uri = null;
+            Dictionary<string, string> actualComponents = null;
+            Dictionary<string, string> expectedComponents = null;
+
+            // Test 1: relative URI <see cref="https://tools.ietf.org/html/rfc3986#section-3.3"/> 
+            uri = pathTest + "?" + queryTest + "#" + fragmentTest;
+
+            expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", schemeTest);
+            expectedComponents.Add("authority", authorityTest);
+            expectedComponents.Add("path", "/a/b/c/" + pathTest);
+            expectedComponents.Add("query", "?" + queryTest);
+            expectedComponents.Add("fragment", "#" + fragmentTest);
+            expectedComponents.Add("username", "username");
+            expectedComponents.Add("password", "1234");
+            expectedComponents.Add("host", "host.com");
+            expectedComponents.Add("port", "123");
+
+            actualComponents = MyParser.parseUri(uri);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
+            }
+        }
+
+        /// <summary>
+        /// This test tests the validation capabilities of CustomURIParser when the application is
+        /// relative and the absolute URI is provided
+        /// </summary>
+        [TestMethod]
+        public void parseTestValidateURI()
+        {
+            string schemeTest = "http";
+            string authorityTest = "username:1234@host.com:123";
+            string pathTest = "path2";
+            string queryTest = "query";
+            string fragmentTest = "fragment";
+
+            URIParser MyParser = new URIParser(false, schemeTest + "://" + authorityTest + "/a/b/c/d;p?q");
+            
+            string uri = null;
+            bool expectedResult = false;
+            bool actualResult = true;
+            string expectedError = "Invalid URI: The hostname could not be parsed.; Invalid URI: The scheme cannot be empty of an absolute URI.\r\n";
+
+            // Test 1: relative URI <see cref="https://tools.ietf.org/html/rfc3986#section-3.3"/> 
+            uri = "///a/path?query#fragment";
+
+            actualResult = MyParser.validateUri(uri, URIParser.validationType.Either);
+
+            Assert.AreEqual(expectedResult, actualResult);
+            Assert.AreEqual(expectedError.ToString(), MyParser.Error.ToString());
         }
     }
 }

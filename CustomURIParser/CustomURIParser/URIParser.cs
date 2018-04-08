@@ -16,6 +16,7 @@ namespace CustomURIParser
         static string[] componentsArray = new string[9] { "scheme", "authority", "path", "query", "fragment", "username", "password", "host", "port" };
         protected StringBuilder error = new StringBuilder("");
         protected bool isAbsolute = true;
+        protected bool isSilent = true;
         protected string absoluteURI = "";
         public enum validationType { Absolute, Relative, Either };
 
@@ -35,7 +36,13 @@ namespace CustomURIParser
             get { return isAbsolute; }
             set { isAbsolute = value; }
         }
- 
+
+        public bool IsSilent
+        {
+            get { return isSilent; }
+            set { isSilent = value; }
+        }
+
         /// <summary>
         /// A default constructor
         /// </summary>
@@ -90,6 +97,7 @@ namespace CustomURIParser
         public Dictionary<string, string> parseUri(string uri)
         {
             Dictionary<string, string> uriDict = new Dictionary<string, string>();
+            Error.Clear();
 
             // Set up the dictionary
             setUpDictionary(uriDict);
@@ -107,6 +115,9 @@ namespace CustomURIParser
                 parseRelative(tempUri, uriDict);
             }
 
+            if(!IsSilent)
+                logComponents(uriDict);
+
             return uriDict;
         }
 
@@ -119,8 +130,24 @@ namespace CustomURIParser
         public void parseComponentsAbsolute(string uri, Dictionary<string, string> uriDict)
         {
             Uri myUri = new Uri(uri,UriKind.Absolute);
-            uriDict["scheme"] = myUri.Scheme;
-            uriDict["authority"] = myUri.Authority;
+            if(myUri.Scheme == "file" && !uri.Contains("file:"))
+            {
+                throw new Exception("Invalid URI: The scheme cannot be empty of an absolute URI.");
+            }
+            else
+            {
+                uriDict["scheme"] = myUri.Scheme;
+            }
+
+            if (string.IsNullOrEmpty(myUri.UserInfo))
+            {
+                uriDict["authority"] = myUri.Authority;
+            }
+            else
+            {
+                uriDict["authority"] = myUri.UserInfo + "@" + myUri.Authority;
+            }
+            
             uriDict["path"] = myUri.AbsolutePath;
             uriDict["query"] = myUri.Query;
             uriDict["fragment"] = myUri.Fragment;
@@ -161,7 +188,16 @@ namespace CustomURIParser
             Uri absUri = new Uri(absoluteURI, UriKind.Absolute);
             Uri myUri = new Uri(absUri, uri);
             uriDict["scheme"] = myUri.Scheme;
-            uriDict["authority"] = myUri.Authority;
+
+            if (string.IsNullOrEmpty(myUri.UserInfo))
+            {
+                uriDict["authority"] = myUri.Authority;
+            }
+            else
+            {
+                uriDict["authority"] = myUri.UserInfo + "@" + myUri.Authority;
+            }
+
             uriDict["path"] = myUri.AbsolutePath;
             uriDict["query"] = myUri.Query;
             uriDict["fragment"] = myUri.Fragment;
@@ -210,6 +246,10 @@ namespace CustomURIParser
                         parseComponentsAbsolute(tempUri, uriDict);
                         uriDict["authority"] = "";
                         uriDict["host"] = "";
+                    }
+                    else
+                    {
+                        throw new Exception("Invalid URI: This is not an absolute URI.");
                     }
                 }
                 else
@@ -291,6 +331,7 @@ namespace CustomURIParser
                     // An absolute URI was not given so it doesn't make sense to report any reference to an absolute URI
                     uriDict["scheme"] = "";
                     uriDict["authority"] = "";
+                    uriDict["host"] = "";
                 }
             }
             catch (Exception e)
@@ -314,7 +355,7 @@ namespace CustomURIParser
                     }
                     else
                     {
-                        error.Append(e.ToString());
+                        error.Append(e.Message);
                     }
                 }
                 else
@@ -337,7 +378,7 @@ namespace CustomURIParser
         public bool validateUri(string uri, validationType desiredValidationType)
         {
             Dictionary<string, string> uriDict = new Dictionary<string, string>();
-
+            string tempError = "";
             // Set up the dictionary
             setUpDictionary(uriDict);
 
@@ -354,6 +395,8 @@ namespace CustomURIParser
 
             if (desiredValidationType == validationType.Relative || desiredValidationType == validationType.Either)
             {
+                tempError = Error.ToString();
+                Error.Clear();
                 // Check if this is a valid URI assuming it is absolute
                 parseRelative(uri, uriDict);
 
@@ -361,14 +404,25 @@ namespace CustomURIParser
                 {
                     return true;
                 }
+                else
+                {
+                    Error.AppendLine("; " + tempError);
+                }
             }
 
             return false;
         }
 
-        public void parseAuthority(Dictionary<string, string> uriDict)
+        /// <summary>
+        /// This method writes the component information to the output log. The method can be overrided
+        /// as part of extensibility work
+        /// </summary>
+        public virtual void logComponents(Dictionary<string, string> uriDict)
         {
-
+            for (int i = 0; i < componentsArray.Length; i++)
+            {
+                Console.WriteLine(uriDict[componentsArray[i]]);
+            }
         }
     }
 }
