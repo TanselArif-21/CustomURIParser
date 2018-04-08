@@ -14,54 +14,8 @@ namespace CustomURIParserTests
     {
         string[] parts = new string[] { "scheme", "authority", "path", "query", "fragment", "username", "password", "host", "port" };
 
-        [TestMethod]
-        public void justATest()
-        {
-            URIParser MyParser = new URIParser();
-
-            // Test 1: full absolute URI
-            string uri = "http://authority/path1?query#fragment";
-            Dictionary<string, string> actualComponents = null;
-
-            Dictionary<string, string> expectedComponents = new Dictionary<string, string>();
-            expectedComponents.Add("scheme", "http");
-            expectedComponents.Add("authority", "authority");
-            expectedComponents.Add("path", "/path1");
-            expectedComponents.Add("query", "?query");
-            expectedComponents.Add("fragment", "#fragment");
-            expectedComponents.Add("username", "");
-            expectedComponents.Add("password", "");
-            expectedComponents.Add("host", "authority");
-            expectedComponents.Add("port", "");
-
-            actualComponents = MyParser.parseUri(uri);
-        }
-
-        [TestMethod]
-        public void justATest2()
-        {
-            URIParser MyParser = new URIParser(false, "http://authority");
-
-            // Test 1: full absolute URI
-            string uri = "/path1?query#fragment";
-            Dictionary<string, string> actualComponents = null;
-
-            Dictionary<string, string> expectedComponents = new Dictionary<string, string>();
-            expectedComponents.Add("scheme", "http");
-            expectedComponents.Add("authority", "authority");
-            expectedComponents.Add("path", "/path1");
-            expectedComponents.Add("query", "?query");
-            expectedComponents.Add("fragment", "#fragment");
-            expectedComponents.Add("username", "");
-            expectedComponents.Add("password", "");
-            expectedComponents.Add("host", "authority");
-            expectedComponents.Add("port", "");
-
-            actualComponents = MyParser.parseUri(uri);
-        }
-
         /// <summary>
-        /// Simple absolute URI unit tests. These tests are meant to check whether CustomURIParse
+        /// Simple absolute URI unit tests. These tests are meant to check whether CustomURIParser
         /// correctly parses simple ABSOLUTE URIs
         /// </summary>
         [TestMethod]
@@ -103,7 +57,6 @@ namespace CustomURIParserTests
             expectedComponents["password"] = "";
             expectedComponents["host"] = "authority";
             expectedComponents["port"] = "";
-
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -2331,9 +2284,6 @@ namespace CustomURIParserTests
         {
             string schemeTest = "http";
             string authorityTest = "username:1234@host.com:123";
-            string pathTest = "path2";
-            string queryTest = "query";
-            string fragmentTest = "fragment";
 
             URIParser MyParser = new URIParser(false, schemeTest + "://" + authorityTest + "/a/b/c/d;p?q");
             
@@ -2349,6 +2299,53 @@ namespace CustomURIParserTests
 
             Assert.AreEqual(expectedResult, actualResult);
             Assert.AreEqual(expectedError.ToString(), MyParser.Error.ToString());
+        }
+
+
+        [TestMethod]
+        public void justATest()
+        {
+            URIParser MyParser = new URIParser();
+
+            // Test 1: full absolute URI
+            string uri = "http://authority/path1?query#fragment";
+            Dictionary<string, string> actualComponents = null;
+
+            Dictionary<string, string> expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", "http");
+            expectedComponents.Add("authority", "authority");
+            expectedComponents.Add("path", "/path1");
+            expectedComponents.Add("query", "?query");
+            expectedComponents.Add("fragment", "#fragment");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "authority");
+            expectedComponents.Add("port", "");
+
+            actualComponents = MyParser.parseUri(uri);
+        }
+
+        [TestMethod]
+        public void justATest2()
+        {
+            URIParser MyParser = new URIParser(false, "http://username:1234@host.com:123/path2?Query#fragment");
+
+            // Test 1: full absolute URI
+            string uri = "/path1?query#fragment";
+            Dictionary<string, string> actualComponents = null;
+
+            Dictionary<string, string> expectedComponents = new Dictionary<string, string>();
+            expectedComponents.Add("scheme", "http");
+            expectedComponents.Add("authority", "authority");
+            expectedComponents.Add("path", "/path1");
+            expectedComponents.Add("query", "?query");
+            expectedComponents.Add("fragment", "#fragment");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "authority");
+            expectedComponents.Add("port", "");
+
+            actualComponents = MyParser.parseUri("http:a:b");
         }
     }
 }

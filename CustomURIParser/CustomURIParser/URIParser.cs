@@ -13,7 +13,7 @@ namespace CustomURIParser
     /// </summary> 
     public class URIParser : GenericUriParser
     {
-        static string[] componentsArray = new string[9] { "scheme", "authority", "path", "query", "fragment", "username", "password", "host", "port" };
+        public static string[] componentsArray = new string[9] { "scheme", "authority", "path", "query", "fragment", "username", "password", "host", "port" };
         protected StringBuilder error = new StringBuilder("");
         protected bool isAbsolute = true;
         protected bool isSilent = true;
@@ -115,8 +115,7 @@ namespace CustomURIParser
                 parseRelative(tempUri, uriDict);
             }
 
-            if(!IsSilent)
-                logComponents(uriDict);
+            manipulateComponents(uriDict);
 
             return uriDict;
         }
@@ -202,7 +201,6 @@ namespace CustomURIParser
             uriDict["query"] = myUri.Query;
             uriDict["fragment"] = myUri.Fragment;
             uriDict["host"] = myUri.Host;
-            uriDict["port"] = myUri.Port.ToString();
 
             // Do not use a default port
             if (myUri.IsDefaultPort)
@@ -414,15 +412,11 @@ namespace CustomURIParser
         }
 
         /// <summary>
-        /// This method writes the component information to the output log. The method can be overriden
-        /// as part of extensibility work
+        /// The method can be overriden as part of extensibility work
         /// </summary>
-        public virtual void logComponents(Dictionary<string, string> uriDict)
+        public virtual void manipulateComponents(Dictionary<string, string> uriDict)
         {
-            for (int i = 0; i < componentsArray.Length; i++)
-            {
-                Console.WriteLine(uriDict[componentsArray[i]]);
-            }
+            // Insert code to update components etc...
         }
     }
 }
