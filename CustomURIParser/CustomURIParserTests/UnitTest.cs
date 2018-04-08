@@ -12,16 +12,16 @@ namespace CustomURIParserTests
     [TestClass]
     public class UnitTest
     {
-        string[] parts = new string[] { "scheme", "authority", "path", "query", "fragment" };
+        string[] parts = new string[] { "scheme", "authority", "path", "query", "fragment", "username", "password", "host", "port" };
 
         [TestMethod]
         public void justATest()
         {
             // Test 1
-            string uri = "http:/a/b/c";
-            //Uri myUri = new Uri(uri);
-            //Uri myBaseUri = new Uri("http:/a/b/c",UriKind.Absolute);
-            //myUri = new Uri(myBaseUri,uri);
+            string uri = "http://username:password@example.com:123/b/c";
+            Uri myUri = new Uri(uri);
+            Uri myBaseUri = new Uri("http:/a/b/c", UriKind.Absolute);
+            myUri = new Uri(myBaseUri, uri);
         }
 
         /// <summary>
@@ -43,6 +43,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/path1");
             expectedComponents.Add("query", "?query");
             expectedComponents.Add("fragment", "#fragment");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "authority");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -59,6 +63,11 @@ namespace CustomURIParserTests
             expectedComponents["path"] = "/path1/path2";
             expectedComponents["query"] = "?query";
             expectedComponents["fragment"] = "#fragment";
+            expectedComponents["username"] = "";
+            expectedComponents["password"] = "";
+            expectedComponents["host"] = "authority";
+            expectedComponents["port"] = "";
+
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -75,6 +84,10 @@ namespace CustomURIParserTests
             expectedComponents["path"] = "/path1:path2";
             expectedComponents["query"] = "?query";
             expectedComponents["fragment"] = "#fragment";
+            expectedComponents["username"] = "";
+            expectedComponents["password"] = "";
+            expectedComponents["host"] = "auth";
+            expectedComponents["port"] = "";
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -91,6 +104,10 @@ namespace CustomURIParserTests
             expectedComponents["path"] = "/path1:path2";
             expectedComponents["query"] = "?query";
             expectedComponents["fragment"] = "";
+            expectedComponents["username"] = "";
+            expectedComponents["password"] = "";
+            expectedComponents["host"] = "auth";
+            expectedComponents["port"] = "";
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -107,6 +124,10 @@ namespace CustomURIParserTests
             expectedComponents["path"] = "/";
             expectedComponents["query"] = "?query";
             expectedComponents["fragment"] = "";
+            expectedComponents["username"] = "";
+            expectedComponents["password"] = "";
+            expectedComponents["host"] = "auth";
+            expectedComponents["port"] = "";
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -123,6 +144,10 @@ namespace CustomURIParserTests
             expectedComponents["path"] = "/html/rfc3986";
             expectedComponents["query"] = "";
             expectedComponents["fragment"] = "#section-3.3";
+            expectedComponents["username"] = "";
+            expectedComponents["password"] = "";
+            expectedComponents["host"] = "tools.ietf.org";
+            expectedComponents["port"] = "";
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -157,7 +182,11 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/" + pathTest);
             expectedComponents.Add("query", "?" + queryTest);
             expectedComponents.Add("fragment", "#" + fragmentTest);
-
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "");
+            expectedComponents.Add("port", "");
+            
             actualComponents = MyParser.parseUri(uri);
 
             for (int i = 0; i < parts.Length; i++)
@@ -174,6 +203,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -191,6 +224,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "?" + queryTest);
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -209,6 +246,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "?" + queryTest);
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -227,6 +268,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "#" + fragmentTest);
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -264,6 +309,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/" + pathTest);
             expectedComponents.Add("query", "?" + queryTest);
             expectedComponents.Add("fragment", "#" + fragmentTest);
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -281,6 +330,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "?" + queryTest);
             expectedComponents.Add("fragment", "#" + fragmentTest);
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -298,6 +351,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "#" + fragmentTest);
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -315,6 +372,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/" + pathTest);
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -332,6 +393,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "?" + queryTest);
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -349,6 +414,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/" + pathTest);
             expectedComponents.Add("query", "?" + queryTest);
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -366,6 +435,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "#" + fragmentTest);
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -383,6 +456,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/" + pathTest);
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "#" + fragmentTest);
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -400,6 +477,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/" + pathTest);
             expectedComponents.Add("query", "?" + queryTest);
             expectedComponents.Add("fragment", "#" + fragmentTest);
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -417,6 +498,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/;" + pathTest);
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -434,6 +519,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/" + pathTest + ";" + pathTest);
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -451,6 +540,11 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/" + pathTest + ";" + pathTest);
             expectedComponents.Add("query", "?" + queryTest);
             expectedComponents.Add("fragment", "#" + fragmentTest);
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
+
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -459,7 +553,7 @@ namespace CustomURIParserTests
                 Assert.AreEqual(expectedComponents[parts[i]], actualComponents[parts[i]]);
             }
 
-            // Test 13: relative URI, empty path without authority <see cref="https://tools.ietf.org/html/rfc3986#section-3.3"/> 
+            // Test 13: relative URI, empty path with authority <see cref="https://tools.ietf.org/html/rfc3986#section-3.3"/> 
             uri = "";
 
             expectedComponents = new Dictionary<string, string>();
@@ -468,6 +562,11 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
+
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -485,6 +584,11 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
+
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -502,6 +606,11 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
+
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -519,6 +628,11 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
+
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -536,6 +650,11 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
+
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -553,6 +672,11 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
+
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -570,6 +694,11 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/" + pathTest);
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
+
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -587,6 +716,11 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
+
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -604,6 +738,11 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/" + pathTest);
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
+
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -641,6 +780,11 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/" + pathTest);
             expectedComponents.Add("query", "?" + queryTest);
             expectedComponents.Add("fragment", "#" + fragmentTest);
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "");
+            expectedComponents.Add("port", "");
+
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -658,6 +802,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "?" + queryTest);
             expectedComponents.Add("fragment", "#" + fragmentTest);
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -675,6 +823,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "#" + fragmentTest);
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -692,6 +844,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/" + pathTest);
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -709,6 +865,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/" + pathTest);
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -726,6 +886,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "?" + queryTest);
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -743,6 +907,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/" + pathTest);
             expectedComponents.Add("query", "?" + queryTest);
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -760,6 +928,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "#" + fragmentTest);
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -777,6 +949,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/" + pathTest);
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "#" + fragmentTest);
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -794,6 +970,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/" + pathTest);
             expectedComponents.Add("query", "?" + queryTest);
             expectedComponents.Add("fragment", "#" + fragmentTest);
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -811,6 +991,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/;" + pathTest);
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -828,6 +1012,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/" + pathTest + ";" + pathTest);
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -845,6 +1033,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/" + pathTest + ";" + pathTest);
             expectedComponents.Add("query", "?" + queryTest);
             expectedComponents.Add("fragment", "#" + fragmentTest);
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -862,6 +1054,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -879,6 +1075,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -896,6 +1096,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -913,6 +1117,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -930,6 +1138,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -947,6 +1159,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -964,6 +1180,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/" + pathTest);
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -981,6 +1201,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -998,6 +1222,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/" + pathTest);
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1035,6 +1263,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/a/b/c/" + pathTest);
             expectedComponents.Add("query", "?" + queryTest);
             expectedComponents.Add("fragment", "#" + fragmentTest);
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1052,6 +1284,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/a/b/c/d;p");
             expectedComponents.Add("query", "?" + queryTest);
             expectedComponents.Add("fragment", "#" + fragmentTest);
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1069,6 +1305,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/a/b/c/d;p");
             expectedComponents.Add("query", "?q");
             expectedComponents.Add("fragment", "#" + fragmentTest);
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1086,6 +1326,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/a/b/c/" + pathTest);
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1103,6 +1347,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/a/b/c/d;p");
             expectedComponents.Add("query", "?" + queryTest);
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1120,6 +1368,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/" + pathTest);
             expectedComponents.Add("query", "?" + queryTest);
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1137,6 +1389,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/a/b/c/d;p");
             expectedComponents.Add("query", "?q");
             expectedComponents.Add("fragment", "#" + fragmentTest);
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1154,6 +1410,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/a/b/c/" + pathTest);
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "#" + fragmentTest);
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1171,6 +1431,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/a/b/c/" + pathTest);
             expectedComponents.Add("query", "?" + queryTest);
             expectedComponents.Add("fragment", "#" + fragmentTest);
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1188,6 +1452,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/a/b/c/;" + pathTest);
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1205,6 +1473,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/a/b/c/" + pathTest + ";" + pathTest);
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1222,6 +1494,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/a/b/c/" + pathTest + ";" + pathTest);
             expectedComponents.Add("query", "?" + queryTest);
             expectedComponents.Add("fragment", "#" + fragmentTest);
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1239,6 +1515,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/a/b/c/d;p");
             expectedComponents.Add("query", "?q");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1256,6 +1536,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/a/b/c/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1273,6 +1557,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/a/b/c/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1290,6 +1578,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/a/b/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1307,6 +1599,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/a/b/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1324,6 +1620,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/a/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1341,6 +1641,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/a/b/" + pathTest);
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1358,6 +1662,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/a/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1375,6 +1683,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/a/" + pathTest);
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", authorityTest);
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1407,6 +1719,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/b/c/g");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "a");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1424,6 +1740,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/b/c/g");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "a");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1441,6 +1761,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/b/c/g/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "a");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1458,6 +1782,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "g");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1475,6 +1803,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/b/c/d;p");
             expectedComponents.Add("query", "?y");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "a");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1492,6 +1824,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/b/c/g");
             expectedComponents.Add("query", "?y");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "a");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1509,6 +1845,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/b/c/d;p");
             expectedComponents.Add("query", "?q");
             expectedComponents.Add("fragment", "#s");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "a");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1526,6 +1866,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/b/c/g");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "#s");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "a");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1543,6 +1887,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/b/c/g");
             expectedComponents.Add("query", "?y");
             expectedComponents.Add("fragment", "#s");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "a");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1560,6 +1908,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/b/c/;x");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "a");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1577,6 +1929,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/b/c/g;x");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "a");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1594,6 +1950,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/b/c/g;x");
             expectedComponents.Add("query", "?y");
             expectedComponents.Add("fragment", "#s");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "a");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1611,6 +1971,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/b/c/d;p");
             expectedComponents.Add("query", "?q");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "a");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1628,6 +1992,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/b/c/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "a");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1645,6 +2013,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/b/c/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "a");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1662,6 +2034,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/b/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "a");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1679,6 +2055,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/b/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "a");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1696,6 +2076,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/b/g");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "a");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1713,6 +2097,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "a");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1730,6 +2118,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "a");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1747,6 +2139,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "/g");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "a");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 
@@ -1779,6 +2175,10 @@ namespace CustomURIParserTests
             expectedComponents.Add("path", "h");
             expectedComponents.Add("query", "");
             expectedComponents.Add("fragment", "");
+            expectedComponents.Add("username", "");
+            expectedComponents.Add("password", "");
+            expectedComponents.Add("host", "");
+            expectedComponents.Add("port", "");
 
             actualComponents = MyParser.parseUri(uri);
 

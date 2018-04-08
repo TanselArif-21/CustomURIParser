@@ -13,7 +13,7 @@ namespace CustomURIParser
     /// </summary> 
     public class URIParser : GenericUriParser
     {
-        static string[] componentsArray = new string[5] { "scheme", "authority", "path", "query", "fragment" };
+        static string[] componentsArray = new string[9] { "scheme", "authority", "path", "query", "fragment", "username", "password", "host", "port" };
         protected StringBuilder error = new StringBuilder("");
         protected bool isAbsolute = true;
         protected string absoluteURI = "";
@@ -124,6 +124,29 @@ namespace CustomURIParser
             uriDict["path"] = myUri.AbsolutePath;
             uriDict["query"] = myUri.Query;
             uriDict["fragment"] = myUri.Fragment;
+            uriDict["host"] = myUri.Host;
+
+            // Do not use a default port
+            if (myUri.IsDefaultPort)
+            {
+                uriDict["port"] = "";
+            }
+            else
+            {
+                uriDict["port"] = myUri.Port.ToString();
+            }
+
+            // Split up the user info field
+            if (myUri.UserInfo.Contains(':'))
+            {
+                uriDict["username"] = myUri.UserInfo.Split(new char[] { ':' }, 2)[0];
+                uriDict["password"] = myUri.UserInfo.Split(new char[] { ':' }, 2)[1];
+            }
+            else
+            {
+                uriDict["username"] = myUri.UserInfo.Split(new char[] { ':' }, 2)[0];
+                uriDict["password"] = "";
+            }
         }
 
         /// <summary>
@@ -142,6 +165,30 @@ namespace CustomURIParser
             uriDict["path"] = myUri.AbsolutePath;
             uriDict["query"] = myUri.Query;
             uriDict["fragment"] = myUri.Fragment;
+            uriDict["host"] = myUri.Host;
+            uriDict["port"] = myUri.Port.ToString();
+
+            // Do not use a default port
+            if (myUri.IsDefaultPort)
+            {
+                uriDict["port"] = "";
+            }
+            else
+            {
+                uriDict["port"] = myUri.Port.ToString();
+            }
+
+            // Split up the user info field
+            if (myUri.UserInfo.Contains(':'))
+            {
+                uriDict["username"] = myUri.UserInfo.Split(new char[] { ':' }, 2)[0];
+                uriDict["password"] = myUri.UserInfo.Split(new char[] { ':' }, 2)[1];
+            }
+            else
+            {
+                uriDict["username"] = myUri.UserInfo.Split(new char[] { ':' }, 2)[0];
+                uriDict["password"] = "";
+            }
         }
 
         /// <summary>
@@ -162,6 +209,7 @@ namespace CustomURIParser
                         tempUri = splitUri[0] + "://a/" + splitUri[1];
                         parseComponentsAbsolute(tempUri, uriDict);
                         uriDict["authority"] = "";
+                        uriDict["host"] = "";
                     }
                 }
                 else
@@ -225,6 +273,7 @@ namespace CustomURIParser
                             string tempAbsoluteURI = splitUri[0] + "://a/" + splitUri[1];
                             parseComponentsRelative(tempUri, uriDict, tempAbsoluteURI);
                             uriDict["authority"] = "";
+                            uriDict["host"] = "";
                         }
                     }
                     else
@@ -315,6 +364,11 @@ namespace CustomURIParser
             }
 
             return false;
+        }
+
+        public void parseAuthority(Dictionary<string, string> uriDict)
+        {
+
         }
     }
 }
