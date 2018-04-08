@@ -414,7 +414,7 @@ namespace CustomURIParser
         }
 
         /// <summary>
-        /// This method writes the component information to the output log. The method can be overrided
+        /// This method writes the component information to the output log. The method can be overriden
         /// as part of extensibility work
         /// </summary>
         public virtual void logComponents(Dictionary<string, string> uriDict)
